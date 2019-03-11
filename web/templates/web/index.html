@@ -36,6 +36,20 @@
             .container {
                 padding: 100px 0px 0px 0px;
             }
+            a.nostyle:link {
+                text-decoration: inherit;
+                color: inherit;
+            }
+            a.nostyle:visited {
+                text-decoration: inherit;
+                color: inherit;
+            }
+            a.nostyle:hover {
+                /*transform: scale(1.1);*/
+                color: #38cc76;
+                /*font: bold;*/
+                /*font-weight: bold;*/
+            }
         </style>
     </head>
     <body>
@@ -56,6 +70,13 @@
                     <input type="text" name='photographer' id='photographer' placeholder="" style='display: none'>
                     <button style="display:none" type="submit">Search</button>
                 </form>
+                <br>
+                <p>Popular searches:
+                    <i><a class='nostyle' href="{% url 'web:search_tags' %}?tag=NASA">NASA</a></i>,&nbsp;
+                    <i><a class='nostyle' href="{% url 'web:search_tags' %}?tag=Mars">Mars</a></i>,&nbsp;
+                    <i><a class='nostyle' href="{% url 'web:search_tags' %}?tag=Jupiter">Jupiter</a></i>,&nbsp;
+                    <i><a class='nostyle' href="{% url 'web:search_tags' %}?tag=Earth">Earth</a></i>&nbsp;
+                </p>
             </div>
         </div>
     </body>
