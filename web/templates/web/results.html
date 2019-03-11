@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="author" content="Michael Wan">
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/tingle.css' %}">
+        {% load static %}
+        <script src="{% static 'js/tingle.js' %}"></script>
+
+        <style>
+            .navbar {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                z-index: 1;
+            }
+            .preview:hover {
+                transform: scale(1.1);
+                transition: transform .4s;
+                cursor: pointer;
+            }
+            .preview {
+                transform: scale(1.0);
+                cursor: auto;
+            }
+            .tingle-modal-box {
+
+            }
+            .modal_container {
+                position: relative;
+                background: transparent;
+                /*background: rgba(0, 0, 0, .8);*/
+            }
+            .tingle-modal-box__content {
+                padding: 0px 0px;
+                background: rgba(0, 0, 0, 0.0); /* Black see-through */
+            }
+            .tingle-modal-box__footer {
+                width: auto;
+                padding: 0px 0px;
+                border-bottom-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+                opacity: 0;
+            }
+            .tingle-modal img {
+                background: white;
+            }
+            .tingle-modal .meta {
+                color: black;
+                font-size: 12px;
+                margin: 5px 5px 5px 5px;
+                background-color: transparent;
+            }
+            .download {
+                cursor: auto
+            }
+            .download:hover {
+                cursor: pointer;
+            }
+            a.nostyle:link {
+                text-decoration: inherit;
+                color: inherit;
+            }
+            a.nostyle:visited {
+                text-decoration: inherit;
+                color: inherit;
+            }
+        </style>
+    </head>
+    <body>
+        {% load web_extras %}
+        {% include "menu.html" %}
+        <div class="container">
+            <br><br><br><br><br>
+            <h1 style="font-size: 300%">{{searchword}}</h1>
+            <i>{{num_results}} "{{searchword}}" results found</i><br><br>
+            <div class="row">
+                {% for row in "012" %}
+                    <div class="col-sm-4">
+                        {% for i in ids|index:row %}
+                            {% if i != -1 %}
+                                <div class="preview" id="preview_{{i}}" width="100%">
+                                    <img src="{{links|index:i}}" width="90%"><br>
+                                    <span id='title' width="90%">{{titles|index:i}}</span><br>
+                                    <span id='date' style='display: none'>{{date_created|index:i}}</span>
+                                    <a class='download_anchor' id='download_{{i}}' href='{{links|index:i}}' style='display: none' download></a>
+                                    {% for tag in tags|index:i %}
+                                        <span class='badge badge-dark'><a class='nostyle no_preview' href="{% url 'web:search_tags' %}?tag={{tag}}">{{tag}}</a></span>&nbsp;&nbsp;
+                                    {% endfor %}
+                                    <!-- <a class='heart badge badge-light' href='#' onclick='return false;'>
+                                        <i class="far fa-heart start"></i>
+                                        <i class="fas fa-heart hover" style="display: none"></i>
+                                        <i class="fas fa-heart click" style="color: red; display: none"></i>
+                                    </a> -->
+                                </div>
+                                <br><br><br>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+        </div>
+    </body>
+    <script>
+        $(document).ready(function() {
+            $(".heart").hover(function() {
+                if ($(this).children('.click').css('display') == 'none') {
+                    $(this).children('.start').css('display', 'none');
+                    $(this).children('.click').css('display', 'none');
+                    $(this).children('.hover').css('display', 'inline');
+                }
+            }, function() {
+                if ($(this).children('.click').css('display') == 'none')
+                    $(this).children('.start').css('display', 'inline');   
+                else
+                    $(this).children('.start').css('display', 'none');
+                $(this).children('.hover').css('display', 'none');
+            });
+            $(document).on('click', '.heart', function() {
+                if ($(this).children('.click').css('display') == 'none') {
+                    $(this).children('.start').css('display', 'none');
+                    $(this).children('.hover').css('display', 'none');
+                    $(this).children('.click').css('display', 'inline');
+                }
+                else {
+                    $(this).children('.start').css('display', 'inline');
+                    $(this).children('.hover').css('display', 'none');
+                    $(this).children('.click').css('display', 'none');
+                }
+            })
+            $(".no_preview").hover(function() {
+                $(this).css('color', '#4684ED');
+                openpreview = false;
+            }, function() {
+                $(this).css('color', 'white');
+                openpreview = true;
+            });
+        });
+        var modal = new tingle.modal({
+            footer: true,
+            stickyFooter: false,
+            closeMethods: ['overlay', 'button', 'escape'],
+            closeLabel: "Close",
+            cssClass: ['custom-class-1', 'custom-class-2'],
+            onOpen: function() {
+            },
+            onClose: function() {
+            },
+            beforeClose: function() {
+                return true;
+            }
+        });
+        function trigger_download(url) {
+            window.open(url);
+        }
+        openpreview = true;
+        $(document).on('click', '.preview', function() {
+            if (openpreview) {
+                img_src = $(this).children('img').attr('src');
+                title = $(this).children('#title')[0].innerText;
+                date = $(this).children('#date')[0].innerText;
+                download = $(this).children('.download_anchor')[0].id;
+                console.log(img_src);
+                modal.setContent("<div class='modal_container'><img class='modal_img' src='" + img_src + "' width='100%'><br><div class='meta' style='text-align: left'><b><i>" + title + "</i></b><br><div style='line-height: 12px'><span style='line-height: 12px' class='badge badge-secondary'><i class='far fa-clock'></i>&nbsp;" + date + "</span></span></i><span onclick='trigger_download(\"" + img_src + "\")' class='download badge badge-primary' style='float: right; line-height: 12px'><i class='fas fa-file-download'></i>&nbsp;Download</span></div></div></div>");
+                modal.open();
+            }
+        });
+    </script>
+</html>

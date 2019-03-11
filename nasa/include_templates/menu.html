@@ -1,0 +1,283 @@
+<style>
+    .dropdown-item {
+        color: blue;
+    }
+    .border {
+        border-radius:4px;
+        border: 2px solid #4684ED;
+        background: #4684ED;
+        padding: 4px 8px 4px 8px;
+        display: inline;
+        text-align: center;
+        color: white;
+    }
+    .border-disabled {
+        border-radius:4px;
+        border: 2px solid #61D692;
+        background: #61D692;
+        padding: 4px 8px 4px 8px;
+        display: inline;
+        text-align: center;
+        color: white;
+    }
+    .border a {
+        font-weight: 500;
+        color: white;
+    }
+    .border-disabled a {
+        font-weight: 500;
+        color: white;
+    }
+    .disable-anchor {
+        pointer-events: none;
+        cursor: default;
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'web:index' %}">
+        <h4>NASA Image Database</h4>
+        <h6>Stunning photos, truly out of this world</h6>
+    </a>
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="#">Favorites</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Explore</a>
+            </li> -->
+        </ul>
+        <form id='search' action="{% url 'web:search' %}" method="post" class="form-inline my-2 my-lg-0">
+            {% csrf_token %}
+            <input type="text" size='40' name='searchword' id='searchword' class="form-control mr-sm-2"
+                placeholder="Search.." style="position: absolute; margin-left: -20vw; margin-top: -0.3vh">
+            <input type="text" name='title' id='title' placeholder="" style='display: none'>
+            <input type="text" name='start_date' id='start_date' placeholder="" style='display: none'>
+            <input type="text" name='end_date' id='end_date' placeholder="" style='display: none'>
+            <input type="text" name='location' id='location' placeholder="" style='display: none'>
+            <input type="text" name='photographer' id='photographer' placeholder="" style='display: none'>
+            <div id='display_tags' style="position: absolute; margin-left: -20vw; margin-top: 2.0vw">
+                <!-- <span class="badge badge-primary">Title Test Asdf</span>&nbsp;<span class="badge badge-primary">Date Tag 2017 - 2018</span>
+                <span class="badge badge-primary">Location Tag</span>&nbsp;<span class="badge badge-primary">Photographer Name</span> -->
+            </div>
+            <button class="btn btn-dark btn-sm my-2 my-sm-0" type="submit">Search</button>
+            &nbsp;&nbsp;
+        </form>
+        <div class="dropdown" style="font-size: 10px">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Add Filter Tags
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="font-size: 11px; padding: 10px 10px 10px 10px">
+                <div class="border">
+                    <a href='#' class="toggle_filter_form" id='toggle_add_title_form' for='add_title_form' onclick='return false;'>Add Title</a Tag>
+                </div>
+                <form id='add_title_form' style='display: none'>
+                    <div class="form-group form-group-sm">
+                        <label for="add_title"><a href='#' class='expand_filter' for='add_title' style="color: #38cc76"><b>Title</b></a></label>
+                        <div id='add_title'>
+                            <input type="email" class="form-control input-sm" placeholder="Title..."
+                                style="font-size: 11px; height:20px">
+                            <br>
+                            <div class="border" style="background: #38cc76; text-align: center">
+                                <a class='add_filter_btn' id='add_title_btn' href='#'>Add Title Keyword</a>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </form>
+                <div class="dropdown-divider"></div>
+                <br>
+                <div class="border">
+                    <a href='#' class="toggle_filter_form" id='toggle_add_date_form' for='add_date_form' onclick='return false;'>
+                    Add Date Tag</a>
+                </div>
+                 <form id='add_date_form' style='display: none'>
+                    <label for="add_date"><a href='#' class='expand_filter' for='add_date' style="color: #38cc76"><b>Date</b></a></label>
+                    <div id='add_date'>
+                        <div class="form-group form-group-sm">
+                            <label for="add_start_date">Start Date</label>
+                            <!-- <input id='add_start_date' type="date"> -->
+                            <input id='add_start_date' type="number" min="1700" max="2099" step="1" value="2018"/>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label for="add_end_date">End Date</label>
+                            <!-- <input id='add_end_date' type="date"> -->
+                            <input id='add_end_date' type="number" min="1700" max="2099" step="1" value="2019"/>
+                        </div>
+                        <div class="border" style="background: #38cc76; text-align: center">
+                            <a class='add_filter_btn' id='add_date_btn' href='#'>Add Date Range</a>
+                        </div>
+                        <br>
+                    </div>
+                </form>
+                <div class="dropdown-divider"></div>
+                <br>
+                <div class="border">
+                    <a href='#' class="toggle_filter_form" id='toggle_add_location_form' for='add_location_form' onclick='return false;'>
+                    Add Location Tag</a>
+                </div>
+                <form id='add_location_form' style='display: none'>
+                    <div class="form-group form-group-sm">
+                        <label for="add_location"><a href='#' class='expand_filter' for='add_location' style="color: #38cc76"><b>Location</b></a></label>
+                        <div id="add_location">
+                            <input type="email" class="form-control input-sm" placeholder="New York..."
+                                style="font-size: 11px; height:20px">
+                            <br>
+                            <div class="border" style="background: #38cc76; text-align: center">
+                                <a class='add_filter_btn' id='add_location_btn' href='#'>Add Location</a>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </form>
+                <div class="dropdown-divider"></div>
+                <br>
+                <div class="border">
+                    <a href='#' class="toggle_filter_form" id='toggle_add_photographer_form' for='add_photographer_form' onclick='return false;'>
+                    Add Photographer Tag</a>
+                </div>
+                <form id='add_photographer_form' style='display: none'>
+                    <div class="form-group form-group-sm">
+                        <label for="add_photographer"><a href='#' class='expand_filter' for='add_photographer' style="color: #38cc76"><b>Photographer</b></a></label>
+                        <div id='add_photographer'>
+                            <input type="email" class="form-control input-sm" placeholder="Johnny Appleseed..."
+                                style="font-size: 11px; height:20px">
+                            <br>
+                            <div class="border" style="background: #38cc76; text-align: center">
+                                <a class='add_filter_btn' id='add_photographer_btn' href='#'>Add Photographer</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+    </div>
+</nav>
+<script>
+    // Toggle Visibility of Filters Dropdown
+    $('body').click(function(){
+        $('#filters').hide();
+        $(document).on('click', function(e) {
+            if ($(e.target).closest('#toggle').length ) {
+                if ($("#filters").css('display') === 'none') {
+                    $("#filters").show();
+                }
+                else {
+                    $("#filters").hide();  
+                }
+            }
+            else if (!$(e.target).closest('#filters').length) {
+                $('#filters').hide();
+            }
+        });
+    });
+    // Toggle Visibility of Filter Forms in the Dropdown
+    $(document).on('click', '.toggle_filter_form', function() {
+        var id = "#" + $(this).attr('for');
+        if ($(id).css('display') == 'none') {
+             $(id).css('display', 'block');
+        }
+        else {
+            $(id).css('display', 'none');
+        }
+        $(this).parent().css('display', 'none');
+        return false;
+    });
+    // Toggle expansion of Filter Forms in the Dropdown
+    $(document).on('click', '.expand_filter', function() {
+        var id = "#" + $(this).attr('for') + '_form';
+        var button = "#toggle_" + $(this).attr('for') + '_form';
+        if ($(id).css('display') == 'none') {
+            $(id).css('display', 'block');
+            $(button).parent().css('display', 'none');
+        }
+        else {
+            $(id).css('display', 'none');
+            $(button).parent().css('display', 'inline');
+        }
+    });
+    // Handles the actual add filter button
+    $(document).on('click', '.add_filter_btn', function() {
+        var btn_id = $(this).attr('id')
+        console.log(btn_id);
+        if (btn_id == 'add_title_btn' ||
+            btn_id == 'add_location_btn' ||
+            btn_id == 'add_photographer_btn') {
+            input = $(this).parent().parent().children("input");
+            class_name = btn_id.substr(4, btn_id.length - 8);
+            $("#toggle_add_" + class_name + "_form").addClass("disable-anchor")
+            $("#toggle_add_" + class_name + "_form").parent().removeClass("border")
+            $("#toggle_add_" + class_name + "_form").parent().addClass("border-disabled")
+            value = input.val();
+            $("#" + class_name).val(value);
+            add_tag(value, class_name);
+        }
+        else {
+            start_date = $("#add_start_date").val();
+            end_date = $("#add_end_date").val();
+            $("#start_date").val(start_date);
+            $("#end_date").val(end_date);
+            value = start_date + ", " + end_date;
+            $("#toggle_add_date_form").addClass("disable-anchor");
+            $("#toggle_add_date_form").parent().removeClass("border");
+            $("#toggle_add_date_form").parent().addClass("border-disabled");
+            add_tag(value, "date");
+        } 
+        var id = '#' + btn_id.substr(0, btn_id.length - 4) + '_form';
+        var parent_btn = '#toggle_' + id.substr(1, id.length)
+        $(id).css('display', 'none');
+        $(parent_btn).parent().css('display', 'inline');
+    });
+
+    $(document).on('click', '.fa-times-circle', function() {
+        console.log("Clicked!");
+        complex_class = $(this).parent()[0].className;
+        s = complex_class.lastIndexOf(' ');
+        e = complex_class.lastIndexOf('_');
+        class_name = complex_class.substr(s + 1, e - s - 1);
+        $("#toggle_add_" + class_name + "_form").removeClass("disable-anchor");
+        $("#toggle_add_" + class_name + "_form").parent().addClass("border");
+        $("#toggle_add_" + class_name + "_form").parent().removeClass("border-disabled");
+        if (class_name == "date") {
+            $("#start_date").val("");
+            $("#end_date").val("");
+        }
+        else
+            $("#" + class_name).val("");
+        remove_tag(class_name);
+    })
+
+    function draw_tags() {
+        tag_info = "";
+        for (i = 0; i < tags.length; i++) {
+            tag_info += "<span class='badge badge-dark " + types[i] + "_type'>";
+            tag_info += tags[i];
+            tag_info += "&nbsp;<i class='fas fa-times-circle'></i></span>";
+            if (i != tags.length - 1)
+                tag_info += "&nbsp;&nbsp;";
+        }
+        document.getElementById("display_tags").innerHTML = tag_info;
+    }
+
+    var tags = []
+    var types = []
+    function add_tag(tag, type) {
+        tags.push(tag);
+        types.push(type);
+        draw_tags();
+    }
+
+    function remove_tag(tag_class) {
+        console.log("Remove " + tag_class);
+        for (i = 0; i < types.length; i++) {
+            if (tag_class == types[i]) {
+                tags.splice(i, 1);
+                types.splice(i, 1);
+                break;
+            }
+        }
+        draw_tags();
+    }
+</script>
