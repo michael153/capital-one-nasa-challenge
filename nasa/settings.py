@@ -26,7 +26,7 @@ SECRET_KEY = 'ei&)pn2hyw6tpc8j-ot=g&ndj-d)bvh*n%hj_-wstk$zqy8c#u'
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['www.capital-one-nasa-challenge.herokuapp.com', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['capital-one-nasa-challenge.herokuapp.com', 'www.capital-one-nasa-challenge.herokuapp.com', '0.0.0.0', '127.0.0.1']
 
 
 # Application definition
