@@ -81,7 +81,11 @@
         <div class="container">
             <br><br><br><br><br>
             <h1 style="font-size: 300%">{{searchword}}</h1>
-            <i>{{num_results}} "{{searchword}}" results found</i><br><br>
+            {% if searchword != "" %}
+                <i>{{num_results}} "{{searchword}}" results found</i><br><br>
+            {% else %}
+                <i>{{num_results}} results found</i><br><br>
+            {% endif %}
             <div class="row">
                 {% for row in "012" %}
                     <div class="col-sm-4">
@@ -91,6 +95,7 @@
                                     <img src="{{links|index:i}}" width="90%"><br>
                                     <span id='title' width="90%">{{titles|index:i}}</span><br>
                                     <span id='date' style='display: none'>{{date_created|index:i}}</span>
+                                    <span id='description' style='display: none'>{{descriptions|index:i}}</span>
                                     <a class='download_anchor' id='download_{{i}}' href='{{links|index:i}}' style='display: none' download></a>
                                     {% for tag in tags|index:i %}
                                         <span class='badge badge-dark'><a class='nostyle no_preview' href="{% url 'web:search_tags' %}?tag={{tag}}">{{tag}}</a></span>&nbsp;&nbsp;
@@ -168,9 +173,10 @@
                 img_src = $(this).children('img').attr('src');
                 title = $(this).children('#title')[0].innerText;
                 date = $(this).children('#date')[0].innerText;
+                description = $(this).children('#description')[0].innerText;
                 download = $(this).children('.download_anchor')[0].id;
                 console.log(img_src);
-                modal.setContent("<div class='modal_container'><img class='modal_img' src='" + img_src + "' width='100%'><br><div class='meta' style='text-align: left'><b><i>" + title + "</i></b><br><div style='line-height: 12px'><span style='line-height: 12px' class='badge badge-secondary'><i class='far fa-clock'></i>&nbsp;" + date + "</span></span></i><span onclick='trigger_download(\"" + img_src + "\")' class='download badge badge-primary' style='float: right; line-height: 12px'><i class='fas fa-file-download'></i>&nbsp;Download</span></div></div></div>");
+                modal.setContent("<div class='modal_container'><img class='modal_img' src='" + img_src + "' width='100%'><br><div class='meta' style='text-align: left'><b><i>" + title + "</i></b><hr style='margin:7px'>Description: " + description + "<br><br><div style='line-height: 12px'><span style='line-height: 12px' class='badge badge-secondary'><i class='far fa-clock'></i>&nbsp;" + date + "</span></span></i><span onclick='trigger_download(\"" + img_src + "\")' class='download badge badge-primary' style='padding-left: 8px; padding-right: 8px; float: right; line-height: 12px'><i class='fas fa-file-download'></i>&nbsp;Download</span></div></div></div>");
                 modal.open();
             }
         });

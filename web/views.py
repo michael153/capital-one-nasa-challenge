@@ -41,13 +41,22 @@ def get_images(searchword, title=None, date_range=None, location=None, photograp
 	i = 0
 	ids = []
 	titles = []
+	descriptions = []
 	src = []
 	tags = []
 	date_created = []
 	for item in data["collection"]["items"]:
 		if "links" not in item:
 			continue
-		titles.append(item["data"][0]["title"])
+		if "title" in item["data"][0]:
+			titles.append(item["data"][0]["title"])
+		else:
+			titles.append("")
+		if "description" in item["data"][0]:
+			descriptions.append(item["data"][0]["description"])
+		else:
+			descriptions.append("")
+
 		if "keywords" in item["data"][0]:
 			keywords = item["data"][0]["keywords"]
 			if len(keywords):
@@ -71,7 +80,7 @@ def get_images(searchword, title=None, date_range=None, location=None, photograp
 		i += 1
 	ids += [-1]*((3 - (len(ids) % 3)) % 3)
 	ids = np.array(ids).reshape((3, len(ids)//3)).tolist()
-	return ids, titles, tags, src, date_created
+	return ids, titles, descriptions, tags, src, date_created
 
 def index_view(request):
 	data = {}
@@ -81,7 +90,7 @@ def search_tags_view(request):
 	data = {}
 	tag = request.GET.get('tag', '')
 	data['searchword'] = tag
-	data['ids'], data['titles'], data['tags'], data['links'], data['date_created'] = get_images(
+	data['ids'], data['titles'], data['descriptions'], data['tags'], data['links'], data['date_created'] = get_images(
 		tag, title="", date_range=("",""), location="", photographer=""
 	)
 	data['num_results'] = len(data['titles'])
@@ -95,7 +104,7 @@ def fastsearch_view(request):
 	photographer = request.POST['location'].strip()
 	date = (request.POST['start_date'].strip(), request.POST['end_date'].strip())
 	data['searchword'] = searchword
-	data['ids'], data['titles'], data['tags'], data['links'], data['date_created'] = get_images(
+	data['ids'], data['titles'], data['descriptions'], data['tags'], data['links'], data['date_created'] = get_images(
 		searchword, title=title, date_range=date, location=location, photographer=photographer
 	)
 	data['num_results'] = len(data['titles'])
@@ -109,7 +118,7 @@ def search_view(request):
 	photographer = request.POST['location'].strip()
 	date = (request.POST['start_date'].strip(), request.POST['end_date'].strip())
 	data['searchword'] = searchword
-	data['ids'], data['titles'], data['tags'], data['links'], data['date_created'] = get_images(
+	data['ids'], data['titles'], data['descriptions'], data['tags'], data['links'], data['date_created'] = get_images(
 		searchword, title=title, date_range=date, location=location, photographer=photographer
 	)
 	data['num_results'] = len(data['titles'])
